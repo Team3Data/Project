@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "challenge2policy.parquet",
+				"fileName": "challenge2policies.parquet",
 				"fileSystem": "challenge2"
 			},
 			"compressionCodec": "snappy"
