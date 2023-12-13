@@ -23,7 +23,16 @@
 			],
 			"transformations": [
 				{
-					"name": "select1"
+					"name": "Mapper"
+				},
+				{
+					"name": "datechange"
+				},
+				{
+					"name": "slicer"
+				},
+				{
+					"name": "removedash"
 				}
 			],
 			"scriptLines": [
@@ -88,13 +97,19 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> PolicyFlow",
-				"PolicyFlow select(mapColumn(",
+				"removedash select(mapColumn(",
 				"          each(match(/* All input columns */true()),",
 				"               /* Input name */$$ = $$)",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> Mapper",
+				"PolicyFlow cast(output(",
+				"          Date as string",
+				"     ),",
+				"     errors: true) ~> datechange",
+				"datechange derive(each(match(name == \"Date\"), \"New_Date\" = substring($$,0,9))) ~> slicer",
+				"slicer derive(each(match(name==\"New_Date\"), \"Final_Date\" = replace(New_Date, \"-\", \"\"))) ~> removedash",
+				"Mapper sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     partitionFileNames:['challenge2policies.parquet'],",
