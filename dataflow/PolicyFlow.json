@@ -1,0 +1,110 @@
+{
+	"name": "PolicyFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Parquet2_Cosmos",
+						"type": "DatasetReference"
+					},
+					"name": "PolicyFlow"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Challenge2PolicySink",
+						"type": "DatasetReference"
+					},
+					"name": "sinkpolicy"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CountryName as string,",
+				"          CountryCode as string,",
+				"          RegionName as string,",
+				"          RegionCode as string,",
+				"          Jurisdiction as string,",
+				"          Date as string,",
+				"          C1_School_closing as double,",
+				"          C1_Flag as boolean,",
+				"          C2_Workplace_closing as double,",
+				"          C2_Flag as boolean,",
+				"          C3_Cancel_public_events as double,",
+				"          C3_Flag as boolean,",
+				"          C4_Restrictions_on_gatherings as double,",
+				"          C4_Flag as boolean,",
+				"          C5_Close_public_transport as double,",
+				"          C5_Flag as boolean,",
+				"          C6_Stay_at_home_requirements as double,",
+				"          C6_Flag as boolean,",
+				"          C7_Restrictions_on_internal_movement as double,",
+				"          C7_Flag as boolean,",
+				"          C8_International_travel_controls as double,",
+				"          E1_Income_support as double,",
+				"          E1_Flag as boolean,",
+				"          E2_Debt_contract_relief as double,",
+				"          E3_Fiscal_measures as double,",
+				"          E4_International_support as double,",
+				"          H1_Public_information_campaigns as double,",
+				"          H1_Flag as boolean,",
+				"          H2_Testing_policy as double,",
+				"          H3_Contact_tracing as double,",
+				"          H4_Emergency_investment_in_healthcare as double,",
+				"          H5_Investment_in_vaccines as double,",
+				"          H6_Facial_Coverings as double,",
+				"          H6_Flag as boolean,",
+				"          H7_Vaccination_policy as double,",
+				"          H7_Flag as boolean,",
+				"          H8_Protection_of_elderly_people as double,",
+				"          H8_Flag as boolean,",
+				"          M1_Wildcard as double,",
+				"          StringencyIndex as double,",
+				"          StringencyIndexForDisplay as double,",
+				"          StringencyLegacyIndex as double,",
+				"          StringencyLegacyIndexForDisplay as double,",
+				"          GovernmentResponseIndex as double,",
+				"          GovernmentResponseIndexForDisplay as double,",
+				"          ContainmentHealthIndex as double,",
+				"          ContainmentHealthIndexForDisplay as double,",
+				"          EconomicSupportIndex as double,",
+				"          EconomicSupportIndexForDisplay as double,",
+				"          id as string,",
+				"          rid as string,",
+				"          self as string,",
+				"          etag as string,",
+				"          attachments as string,",
+				"          ts as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> PolicyFlow",
+				"PolicyFlow select(mapColumn(",
+				"          each(match(/* All input columns */true()),",
+				"               /* Input name */$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['challenge2policies.parquet'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkpolicy"
+			]
+		}
+	}
+}
