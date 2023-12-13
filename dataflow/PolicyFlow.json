@@ -107,7 +107,7 @@
 				"          Date as string",
 				"     ),",
 				"     errors: true) ~> datechange",
-				"datechange derive(each(match(name == \"Date\"), \"New_Date\" = substring($$,0,9))) ~> slicer",
+				"datechange derive(each(match(name==\"Date\"), \"New_Date\" = substring($$,0,10))) ~> slicer",
 				"slicer derive(each(match(name==\"New_Date\"), \"Final_Date\" = replace(New_Date, \"-\", \"\"))) ~> removedash",
 				"Mapper sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
